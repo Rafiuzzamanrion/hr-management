@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "address" DROP NOT NULL,
+ALTER COLUMN "joiningDate" DROP NOT NULL,
+ALTER COLUMN "salary" DROP NOT NULL,
+ALTER COLUMN "contractExpire" DROP NOT NULL;

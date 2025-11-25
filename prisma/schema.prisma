@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  hr
+  manager
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  phone          String
+  password       String
+  authToken      String    @unique
+  address        String?
+  designation    String
+  department     String
+  role           Role
+  joiningDate    DateTime?
+  salary         Int?
+  contractExpire DateTime?
+  
+  attendances    Attendance[]
+  performances   Performance[]
+  payrolls       Payroll[]     @relation("PayrollFor")
+  createdPayroll Payroll[]     @relation("PayrollCreatedBy")
+}
+
+model Attendance {
+  id         String   @id @default(uuid())
+  date       DateTime
+  checkIn    DateTime
+  checkOut   DateTime?
+  employeeId String
+  employee   User @relation(fields: [employeeId], references: [id])
+}
+
+model Performance {
+  id                String   @id @default(uuid())
+  title             String
+  assignAt          DateTime
+  completedAt       DateTime?
+  performanceRating Int
+  employeeId        String
+  employee          User @relation(fields: [employeeId], references: [id])
+}
+
+model Payroll {
+  id            String   @id @default(uuid())
+  payrollMonth  DateTime
+  totalAmount   Int
+  reduceAmount  Int?
+  payrollForId  String
+  payrollFor    User @relation("PayrollFor", fields: [payrollForId], references: [id])
+  createdById   String
+  createdBy     User @relation("PayrollCreatedBy", fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+}
